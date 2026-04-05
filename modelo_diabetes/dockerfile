@@ -1,0 +1,20 @@
+ARG PYTHON_VERSION=3.11
+FROM python:${PYTHON_VERSION}
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+# grava a senha
+RUN mkdir -p /root/.jupyter
+
+RUN echo 'c.ServerApp.password = "argon2:$argon2id$v=19$m=10240,t=10,p=8$qn6yn2c3TWCj7d1LIctkyA$GfT64IG8IXmFwmjFbxL/f1Rff6rG4X7Y++bqRSLwM+U"' >> /root/.jupyter/jupyter_server_config.py
+RUN echo "c.ServerApp.token = ''" >> /root/.jupyter/jupyter_server_config.py
+RUN echo "c.ServerApp.ip = '0.0.0.0'" >> /root/.jupyter/jupyter_server_config.py
+RUN echo "c.ServerApp.open_browser = False" >> /root/.jupyter/jupyter_server_config.py
+
+CMD ["jupyter", "lab", "--allow-root"]
